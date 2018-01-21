@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require("body-parser");
+const lodash = require("lodash");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -24,9 +25,7 @@ app.use(bodyParser.json());
 // API ENDPOINTS
 app.post('/api/donation', (req, res) => {
 	const donation = new Donation();
-	Object.keys(req.body.donation).forEach(function(key) {
-		donation[key] = req.body.donation[key];
-	});
+	lodash.merge(donation, req.body.donation);
 
 	donation.save(function(err) {
 		if (err) {

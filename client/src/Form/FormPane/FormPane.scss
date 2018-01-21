@@ -2,8 +2,9 @@ $button-padding: 1em 2em;
 
 .form-card {
     background-color: #ffffff;
-    box-shadow: 0 2px 44px rgba(0, 0, 0, .2);
     width: 50vw;
+    max-height: 50vh;
+    overflow-y: scroll;
     padding: 3em;
     display: flex;
     flex-direction: column;
@@ -11,15 +12,19 @@ $button-padding: 1em 2em;
     .input-wrapper {
         margin: 0.5em 0;
         width: 100%;
-        input {
-            border: 1px solid #d2d2d2;
-            box-sizing: border-box;
-            font-family: 'Karla', sans-serif;
-            font-size: 0.9em;
+
+        .formInput {
+            font-family: 'Karla', sans-serif !important;
             text-transform: uppercase;
-            width: 100%;
-            padding: 1em;
-            transition: all 0.2s ease-in-out;
+        }
+
+        .formInputError {
+            text-transform: lowercase;
+        }
+
+        .errorMessage {
+            color: red;
+            padding: 0.5em 0;
         }
     }
 

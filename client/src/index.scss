@@ -14,9 +14,11 @@ h2 {
 
 button, input[type=submit], input[type=button] {
     background-color: #ffffff;
-    border: 2px solid #cccccc;
+    border: 2px solid #2C2D34;
+    font-family: 'Karla', sans-serif;
     margin-right: 0.5em;
     padding: 1em 2em;
+    transition: background .15s ease,color .15s ease;
 
     &:last-child {
         margin-right: 0;
@@ -24,5 +26,17 @@ button, input[type=submit], input[type=button] {
 
     &:focus {
         outline: 0;
+    }
+
+    &:hover {
+        cursor: pointer;
+        color: #ffffff;
+        border: 2px solid #2C2D34;
+        background-color: #2C2D34;
+        transition: background .15s ease,color .15s ease;
+    }
+
+    &.disabled {
+        border: 2px solid #cccccc;
     }
 }
