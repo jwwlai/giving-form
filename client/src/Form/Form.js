@@ -3,6 +3,7 @@ import "./Form.css";
 import FormPane from "./FormPane";
 import SummaryPane from "./SummaryPane";
 import validator from "validator";
+import {Step, StepLabel, Stepper,} from 'material-ui/Stepper';
 
 const LABELS = {
 	donationAmount: "donation amount",
@@ -17,7 +18,8 @@ const LABELS = {
 	creditCardNumber: "credit card number",
 	cvv: "CVV",
 	expireMonth: "expiration month",
-	expireYear: "expiration year"
+	expireYear: "expiration year",
+	donationHeader: "Donation amount"
 };
 
 export default class Form extends React.Component {
@@ -107,23 +109,22 @@ export default class Form extends React.Component {
 	}
 
 	_handleOnSubmit(e) {
-		console.log("Creating new donation");
 		fetch("/api/donation", {
 			method: "POST",
-			body: JSON.stringify({ donation: this.state.formData }),
+			body: JSON.stringify({donation: this.state.formData}),
 			headers: new Headers({
 				"Content-Type": "application/json"
 			})
 		})
 		.then((response) => {
 			console.log("Thank you for your donation!");
-
+			e.preventDefault();
 			// TODO display a thanks donation page
 		})
 	}
 
 	_handleOnError(hasError) {
-		this.setState({ hasError });
+		this.setState({hasError});
 	}
 
 	_getNextFormCard() {
@@ -149,7 +150,7 @@ export default class Form extends React.Component {
 	}
 
 	_getLastCard() {
-		return <SummaryPane formData={this.state.formData} formLabels={LABELS} />;
+		return <SummaryPane formData={this.state.formData} formLabels={LABELS}/>;
 	}
 
 	// FORM SECTIONS
@@ -157,7 +158,7 @@ export default class Form extends React.Component {
 	_getDonationAmountCard() {
 		return (
 			<FormPane
-				formHeader="Donation amount"
+				formHeader={LABELS.donationHeader}
 				formInputs={{
 					donationAmount: {
 						displayName: LABELS.donationAmount,
@@ -174,10 +175,10 @@ export default class Form extends React.Component {
 				onError={this._handleOnError}
 			>
 				<div className="button-wrapper">
-					<input type="button" name="donationAmount" onClick={this._handleOnChange} value="$50" />
-					<input type="button" name="donationAmount" onClick={this._handleOnChange} value="$100" />
-					<input type="button" name="donationAmount" onClick={this._handleOnChange} value="$150" />
-					<input type="button" name="donationAmount" onClick={this._handleOnChange} value="$300" />
+					<input type="button" name="donationAmount" onClick={this._handleOnChange} value="$50"/>
+					<input type="button" name="donationAmount" onClick={this._handleOnChange} value="$100"/>
+					<input type="button" name="donationAmount" onClick={this._handleOnChange} value="$150"/>
+					<input type="button" name="donationAmount" onClick={this._handleOnChange} value="$300"/>
 				</div>
 			</FormPane>
 		);
@@ -202,7 +203,9 @@ export default class Form extends React.Component {
 						placeholder: LABELS.email,
 						value: this.state.formData.email,
 						required: true,
-						isValid: (field) => { return validator.isEmail(field) }
+						isValid: (field) => {
+							return validator.isEmail(field)
+						}
 					},
 					phoneNumber: {
 						placeholder: LABELS.phoneNumber,
@@ -255,10 +258,7 @@ export default class Form extends React.Component {
 					creditCardNumber: {
 						placeholder: LABELS.creditCardNumber,
 						value: this.state.formData.creditCardNumber,
-						required: true,
-						isValid: (field) => {
-							return validator.isCreditCard(field)
-						}
+						required: true
 					},
 					cvv: {
 						placeholder: LABELS.cvv,
@@ -283,9 +283,32 @@ export default class Form extends React.Component {
 	}
 
 	render() {
+		const stepIndex = this.state.currentFormIdx;
 		return (
-			<div>
+			<div style={{width: '100%', maxWidth: 900, margin: 'auto'}}>
 				<form onSubmit={this._handleOnSubmit}>
+					<Stepper activeStep={stepIndex}>
+						<Step>
+							<StepLabel style={{color: "#cccccc"}}>
+								Donation amount
+							</StepLabel>
+						</Step>
+						<Step>
+							<StepLabel style={{color: "#cccccc"}}>
+								Donor information
+							</StepLabel>
+						</Step>
+						<Step>
+							<StepLabel style={{color: "#cccccc"}}>Billing address</StepLabel>
+						</Step>
+						<Step>
+							<StepLabel style={{color: "#cccccc"}}>Payment information</StepLabel>
+						</Step>
+						<Step>
+							<StepLabel style={{color: "#cccccc"}}>Donation summary</StepLabel>
+						</Step>
+					</Stepper>
+
 					{ this.state.hasNextForm
 						? (this.state.formGroups[this.state.currentFormIdx])()
 						: this._getLastCard()
@@ -307,13 +330,15 @@ export default class Form extends React.Component {
 							</button>
 
 							{ this.state.hasNextForm
-								? <button type="button" className={this.state.hasError ? "disabled" : ""} onClick={this._getNextFormCard} disabled={this.state.hasError}>Next</button>
+								? <button type="button"
+							          className={this.state.hasError ? "disabled" : ""}
+							          onClick={this._getNextFormCard} disabled={this.state.hasError}>Next</button>
 								: <input type="submit" value="Submit" />
 							}
 						</div>
 					</div>
 				</form>
 			</div>
-		);
+		)
 	}
 };

@@ -15,6 +15,7 @@ mongoose.connection.on("connected", function() {
 	console.log("Connected");
 });
 
+// DATABASE MODELS
 const Donation = require("./models/donation");
 
 // BODY PARSER MIDDLEWARE
