@@ -284,28 +284,42 @@ export default class Form extends React.Component {
 
 	render() {
 		const stepIndex = this.state.currentFormIdx;
+
+		// Unfortunately mui does not support class names
+		const stepperStyles = {
+			width: '100%',
+			maxWidth: 1000,
+			margin: 'auto',
+			backgroundColor: "#ffffff"
+		};
 		return (
-			<div style={{width: '100%', maxWidth: 900, margin: 'auto'}}>
+			<div style={stepperStyles}>
 				<form onSubmit={this._handleOnSubmit}>
-					<Stepper activeStep={stepIndex}>
+					<Stepper activeStep={stepIndex} style={{ padding: "0 3em 0 1.5em"}}>
 						<Step>
-							<StepLabel style={{color: "#cccccc"}}>
+							<StepLabel style={{ fontFamily: "Karla, sans-serif", textTransform: "uppercase" }}>
 								Donation amount
 							</StepLabel>
 						</Step>
 						<Step>
-							<StepLabel style={{color: "#cccccc"}}>
+							<StepLabel style={{ fontFamily: "Karla, sans-serif", textTransform: "uppercase" }}>
 								Donor information
 							</StepLabel>
 						</Step>
 						<Step>
-							<StepLabel style={{color: "#cccccc"}}>Billing address</StepLabel>
+							<StepLabel style={{ fontFamily: "Karla, sans-serif", textTransform: "uppercase" }}>
+								Billing address
+							</StepLabel>
 						</Step>
 						<Step>
-							<StepLabel style={{color: "#cccccc"}}>Payment information</StepLabel>
+							<StepLabel style={{ fontFamily: "Karla, sans-serif", textTransform: "uppercase" }}>
+								Payment information
+							</StepLabel>
 						</Step>
 						<Step>
-							<StepLabel style={{color: "#cccccc"}}>Donation summary</StepLabel>
+							<StepLabel style={{ fontFamily: "Karla, sans-serif", textTransform: "uppercase" }}>
+								Donation summary
+							</StepLabel>
 						</Step>
 					</Stepper>
 
