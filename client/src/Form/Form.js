@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "./Form.css";
 import FormPane from "./FormPane";
 import SummaryPane from "./SummaryPane";
@@ -18,8 +19,7 @@ const LABELS = {
 	creditCardNumber: "credit card number",
 	cvv: "CVV",
 	expireMonth: "expiration month",
-	expireYear: "expiration year",
-	donationHeader: "Donation amount"
+	expireYear: "expiration year"
 };
 
 export default class Form extends React.Component {
@@ -33,6 +33,7 @@ export default class Form extends React.Component {
 			hasPreviousForm: false,
 			hasError: true,
 			hasBeenSubmitted: false,
+			showTable: false,
 			formGroups: {},
 			formData: {
 				donationAmount: "",
@@ -58,6 +59,7 @@ export default class Form extends React.Component {
 		this._handleOnSubmit = this._handleOnSubmit.bind(this);
 		this._handleOnError = this._handleOnError.bind(this);
 		this._clearForm = this._clearForm.bind(this);
+		this._toggleDonationsTable = this._toggleDonationsTable.bind(this);
 	}
 
 	componentWillMount() {
@@ -159,7 +161,7 @@ export default class Form extends React.Component {
 		return <SummaryPane formData={this.state.formData} formLabels={LABELS}/>;
 	}
 
-	_getThankYou() {
+	_getThankYouCard() {
 		return (
 			<FormPane>
 				<h2>{`You're awesome ${this.state.formData.firstName}!`}</h2>
@@ -168,12 +170,17 @@ export default class Form extends React.Component {
 		);
 	}
 
+	_toggleDonationsTable() {
+		this.setState({ showTable: !this.state.showTable });
+		this.props.toggleDonationsTable();
+	}
+
 	// FORM SECTIONS
 
 	_getDonationAmountCard() {
 		return (
 			<FormPane
-				formHeader={LABELS.donationHeader}
+				formHeader={"Donation amount"}
 				formInputs={{
 					donationAmount: {
 						displayName: LABELS.donationAmount,
@@ -339,13 +346,20 @@ export default class Form extends React.Component {
 
 					{ this.state.hasNextForm && !this.state.hasBeenSubmitted
 						? (this.state.formGroups[this.state.currentFormIdx])()
-						: this._getThankYou()
+						: this._getThankYouCard()
 					}
 
 					<div className="actions-wrapper">
 						<div>
 							<button type="button" onClick={this._clearForm}>
 								Start over
+							</button>
+							<button type="button" onClick={this._toggleDonationsTable}>
+								{
+									this.state.showTable
+									? "Hide table"
+									: "See who else donated!"
+								}
 							</button>
 						</div>
 						<div>
@@ -361,12 +375,22 @@ export default class Form extends React.Component {
 								? <button type="button"
 							          className={this.state.hasError ? "disabled" : ""}
 							          onClick={this._getNextFormCard} disabled={this.state.hasError}>Next</button>
-								: <input type="submit" value="Submit" />
+								: <input
+									type="submit"
+									value="Submit"
+									className={this.state.hasBeenSubmitted ? "disabled" : ""}
+									disabled={this.state.hasBeenSubmitted} />
 							}
 						</div>
 					</div>
+
+
 				</form>
 			</div>
 		)
 	}
 };
+
+Form.propTypes = {
+	toggleDonationsTable: PropTypes.func
+}

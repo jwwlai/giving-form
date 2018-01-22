@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const bodyParser = require("body-parser");
 const lodash = require("lodash");
 
@@ -17,24 +17,79 @@ mongoose.connection.on("connected", function() {
 
 // DATABASE MODELS
 const Donation = require("./models/donation");
+const DonationLedger = require("./models/donation-ledger");
+
 
 // BODY PARSER MIDDLEWARE
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+function updateLedger(firstName, lastName, donationAmount) {
+	// Find to see if the ledger exists, if not create a new one
+	// Add to ledger
+	DonationLedger.findOne({ _donationType: "ledger" }, function(err, donationLedger) {
+		if (err) {
+			return;
+		}
+
+		if (!donationLedger) {
+			donationLedger = new DonationLedger();
+		}
+
+		// Add to total donation amount
+		if (donationAmount.includes("$")) {
+			donationAmount = parseInt(donationAmount.split("$")[1]);
+		} else {
+			donationAmount = parseInt(donationAmount);
+		}
+		donationLedger.totalDonations = donationLedger.totalDonations + donationAmount;
+
+		// Update ledger
+		const ledger = { firstName, lastName, donationAmount };
+		donationLedger.summaryInfo.push(ledger);
+		donationLedger.markModified("summaryInfo");
+
+		// Save
+		donationLedger.save()
+			.then((res) => {
+				console.log("Saved");
+			})
+			.catch((err) => {
+				console.log("Errored");
+			});
+	})
+}
 
 // API ENDPOINTS
-app.post('/api/donation', (req, res) => {
-	const donation = new Donation();
-	lodash.merge(donation, req.body.donation);
+app.get("/api/donations", (req, res) => {
+	DonationLedger.findOne({ _donationType: "ledger" }, function(err, donationLedger) {
+		if (err) {
+			res.send(err);
+			return;
+		}
 
+		res.status(200).send(donationLedger);
+	});
+});
+
+
+app.post("/api/donation", (req, res) => {
+	const donation = new Donation();
+
+	// Save to ledger to keep a record of all donations
+	updateLedger(req.body.donation.firstName, req.body.donation.lastName, req.body.donation.donationAmount);
+
+	// Save to donation database
+	lodash.merge(donation, req.body.donation);
 	donation.save(function(err) {
 		if (err) {
 			res.send(err);
 			return;
 		}
-		res.json({ message: "Donation was added successfully" });
+		res.status(200).json();
 	});
 });
+
+
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

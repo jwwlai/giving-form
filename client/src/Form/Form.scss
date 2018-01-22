@@ -4,4 +4,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .disabled {
+        border: 2px solid #cccccc;
+    }
 }

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const DonationSchema = new Schema({
+	_donationType: { type: String, default: 'donation' },
 	donationAmount: String,
 	firstName: String,
 	lastName: String,
@@ -17,4 +18,4 @@ const DonationSchema = new Schema({
 	expireYear: String
 });
 
-module.exports = mongoose.model("donations", DonationSchema);
+module.exports = mongoose.model("donations", DonationSchema, "donations");
