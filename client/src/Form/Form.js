@@ -32,6 +32,7 @@ export default class Form extends React.Component {
 			hasNextForm: false,
 			hasPreviousForm: false,
 			hasError: true,
+			hasBeenSubmitted: false,
 			formGroups: {},
 			formData: {
 				donationAmount: "",
@@ -69,7 +70,8 @@ export default class Form extends React.Component {
 				0: () => this._getDonationAmountCard(),
 				1: () => this._getDonorInfoCard(),
 				2: () => this._getBillingAddressCard(),
-				3: () => this._getPaymentInfoCard()
+				3: () => this._getPaymentInfoCard(),
+				4: () => this._getLastCard()
 			}
 		}, () => {
 			this.totalFormGroups = Object.keys(this.state.formGroups).length;
@@ -84,6 +86,7 @@ export default class Form extends React.Component {
 			currentFormIdx: 0,
 			hasNextForm: true,
 			hasPreviousForm: false,
+			hasBeenSubmitted: false,
 			formData: {
 				donationAmount: "",
 				firstName: "",
@@ -109,6 +112,7 @@ export default class Form extends React.Component {
 	}
 
 	_handleOnSubmit(e) {
+		e.preventDefault();
 		fetch("/api/donation", {
 			method: "POST",
 			body: JSON.stringify({donation: this.state.formData}),
@@ -119,7 +123,7 @@ export default class Form extends React.Component {
 		.then((response) => {
 			console.log("Thank you for your donation!");
 			e.preventDefault();
-			// TODO display a thanks donation page
+			this.setState({ hasBeenSubmitted: true })
 		})
 	}
 
@@ -133,7 +137,8 @@ export default class Form extends React.Component {
 			return {
 				currentFormIdx: nextFormIdx,
 				hasNextForm: (nextFormIdx < this.totalFormGroups),
-				hasPreviousForm: true
+				hasPreviousForm: true,
+				hasBeenSubmitted: false
 			}
 		});
 	}
@@ -144,13 +149,23 @@ export default class Form extends React.Component {
 			return {
 				currentFormIdx: nextFormIdx,
 				hasNextForm: (this.totalFormGroups > 1),
-				hasPreviousForm: (nextFormIdx > 0)
+				hasPreviousForm: (nextFormIdx > 0),
+				hasBeenSubmitted: false
 			}
 		});
 	}
 
 	_getLastCard() {
 		return <SummaryPane formData={this.state.formData} formLabels={LABELS}/>;
+	}
+
+	_getThankYou() {
+		return (
+			<FormPane>
+				<h2>{`You're awesome ${this.state.formData.firstName}!`}</h2>
+				<div>{`Your donation of ${this.state.formData.donationAmount} was received.`}</div>
+			</FormPane>
+		);
 	}
 
 	// FORM SECTIONS
@@ -285,17 +300,16 @@ export default class Form extends React.Component {
 	render() {
 		const stepIndex = this.state.currentFormIdx;
 
-		// Unfortunately mui does not support class names
-		const stepperStyles = {
-			width: '100%',
-			maxWidth: 1000,
-			margin: 'auto',
-			backgroundColor: "#ffffff"
-		};
+		// Unfortunately mui does not support class names... Not the best mobile experience
 		return (
-			<div style={stepperStyles}>
+			<div style={{
+				width: '100%',
+				maxWidth: 1000,
+				margin: 'auto',
+				backgroundColor: "#ffffff"
+			}}>
 				<form onSubmit={this._handleOnSubmit}>
-					<Stepper activeStep={stepIndex} style={{ padding: "0 3em 0 1.5em"}}>
+					<Stepper activeStep={stepIndex} style={{ padding: "0 3em 0 1.5em", display: "flex"}}>
 						<Step>
 							<StepLabel style={{ fontFamily: "Karla, sans-serif", textTransform: "uppercase" }}>
 								Donation amount
@@ -323,9 +337,9 @@ export default class Form extends React.Component {
 						</Step>
 					</Stepper>
 
-					{ this.state.hasNextForm
+					{ this.state.hasNextForm && !this.state.hasBeenSubmitted
 						? (this.state.formGroups[this.state.currentFormIdx])()
-						: this._getLastCard()
+						: this._getThankYou()
 					}
 
 					<div className="actions-wrapper">
@@ -343,7 +357,7 @@ export default class Form extends React.Component {
 								Go back
 							</button>
 
-							{ this.state.hasNextForm
+							{ (this.state.currentFormIdx < this.totalFormGroups - 1)
 								? <button type="button"
 							          className={this.state.hasError ? "disabled" : ""}
 							          onClick={this._getNextFormCard} disabled={this.state.hasError}>Next</button>
