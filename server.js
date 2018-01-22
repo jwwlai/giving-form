@@ -25,8 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 function updateLedger(firstName, lastName, donationAmount) {
-	// Find to see if the ledger exists, if not create a new one
-	// Add to ledger
+	// See if the ledger exists, if not create a new one
 	DonationLedger.findOne({ _donationType: "ledger" }, function(err, donationLedger) {
 		if (err) {
 			return;
@@ -36,6 +35,7 @@ function updateLedger(firstName, lastName, donationAmount) {
 			donationLedger = new DonationLedger();
 		}
 
+		// Ledger already exists, so just update it.
 		// Add to total donation amount
 		if (donationAmount.includes("$")) {
 			donationAmount = parseInt(donationAmount.split("$")[1]);
@@ -49,14 +49,8 @@ function updateLedger(firstName, lastName, donationAmount) {
 		donationLedger.summaryInfo.push(ledger);
 		donationLedger.markModified("summaryInfo");
 
-		// Save
-		donationLedger.save()
-			.then((res) => {
-				console.log("Saved");
-			})
-			.catch((err) => {
-				console.log("Errored");
-			});
+		// Save - Needs error handling
+		donationLedger.save();
 	})
 }
 

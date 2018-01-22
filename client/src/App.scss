@@ -13,15 +13,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 3em;
     .table-container {
         background-color: #ffffff;
         width: 1000px;
         max-height: 50vh;
         overflow-y: scroll;
-        margin-top: 1em;
+        padding: 1em 0;
 
         .table-header {
-            padding: 3em 3em 0 3em;
+            padding: 0 3em;
         }
 
         .table {

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const DonationSchema = new Schema({
-	_donationType: { type: String, default: 'donation' },
+	_donationType: { type: String, default: "donation" },
 	donationAmount: String,
 	firstName: String,
 	lastName: String,

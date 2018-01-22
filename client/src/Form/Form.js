@@ -4,7 +4,7 @@ import "./Form.css";
 import FormPane from "./FormPane";
 import SummaryPane from "./SummaryPane";
 import validator from "validator";
-import {Step, StepLabel, Stepper,} from 'material-ui/Stepper';
+import {Step, StepLabel, Stepper,} from "material-ui/Stepper";
 
 const LABELS = {
 	donationAmount: "donation amount",
@@ -164,7 +164,7 @@ export default class Form extends React.Component {
 	_getThankYouCard() {
 		return (
 			<FormPane>
-				<h2>{`You're awesome ${this.state.formData.firstName}!`}</h2>
+				<h2>{`You"re awesome ${this.state.formData.firstName}!`}</h2>
 				<div>{`Your donation of ${this.state.formData.donationAmount} was received.`}</div>
 			</FormPane>
 		);
@@ -310,9 +310,9 @@ export default class Form extends React.Component {
 		// Unfortunately mui does not support class names... Not the best mobile experience
 		return (
 			<div style={{
-				width: '100%',
+				width: "100%",
 				maxWidth: 1000,
-				margin: 'auto',
+				margin: "auto",
 				backgroundColor: "#ffffff"
 			}}>
 				<form onSubmit={this._handleOnSubmit}>
@@ -393,4 +393,4 @@ export default class Form extends React.Component {
 
 Form.propTypes = {
 	toggleDonationsTable: PropTypes.func
-}
+};
