@@ -1,5 +1,9 @@
 My giving form
 
+To run locally:
+- npm run dev
+- make sure mongo is set up and running
+
 This app was created with:
 - create-react-app
 - React
